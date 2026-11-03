@@ -66,7 +66,18 @@ export const register: Register = on => {
     return { text: '사용률 패널을 열었습니다.' }
   })
 
-  // 응답이 끝날 때마다 기록 파일을 다시 읽습니다.
+  // 응답 중에도 기록 파일을 다시 읽습니다 (상태 표시줄 값이 응답 중에 갱신되므로).
+  on('turn.start', async ($, e, next) => {
+    // update의 함수는 값을 바로 돌려줘야 합니다. Promise를 넘기면 NaN이 됩니다.
+    const snap = await loadSnapshot($)
+    await update($, usage, () => snap)
+    return next(e)
+  })
+    // update의 함수는 값을 바로 돌려줘야 합니다. Promise를 넘기면 NaN이 됩니다.
+    const snap = await loadSnapshot($)
+    await update($, usage, () => snap)
+    return next(e)
+  })
   on('turn.complete', async ($, e, next) => {
     // update의 함수는 값을 바로 돌려줘야 합니다. Promise를 넘기면 NaN이 됩니다.
     const snap = await loadSnapshot($)
