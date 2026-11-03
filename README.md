@@ -115,3 +115,11 @@ Copy-Item "D:\클로드 개발\token-dashboard\gauge.mjs" "$HOME\.claude\token-d
 - `gauge.mjs`: 계기판 본체 (터미널, HTML, 상태 표시줄)
 - `docs/`: 화면 스크린샷
 - `CLAUDE.md`, `PROMPT.md`: 작업 규칙과 초기 요구사항
+
+## 패널 값이 나오는 방식
+
+패널은 `token-dashboard` 상태 표시줄 스크립트가 남긴 두 파일을 읽습니다.
+- `snapshots.jsonl`: 공식 5시간·7일 한도 % (응답마다 갱신)
+- `summary.json`: 캐시 적중률, 최대 세션·최다 도구 비중 (최근 5시간, 10분마다 갱신)
+
+따라서 패널을 쓰려면 상태 표시줄 설치(install)를 먼저 해 주세요. 설치를 다시 하면 최신 `gauge.mjs`가 복사됩니다.

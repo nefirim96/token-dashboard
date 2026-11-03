@@ -66,6 +66,27 @@ async function statusline() {
     }
   }
 
+  // 패널(mod)이 읽을 요약 파일. 대화 기록 전체 집계는 무거우므로 10분에 한 번만 다시 계산합니다.
+  try {
+    const sumFile = path.join(DATA_DIR, 'summary.json');
+    const old = fs.existsSync(sumFile) ? JSON.parse(fs.readFileSync(sumFile, 'utf8')) : null;
+    if (!old || Date.now() - old.ts > 10 * 60e3) {
+      const agg = aggregate(Date.now() - 5 * 3600e3);
+      const cacheDen = agg.tot.cacheRead + agg.tot.input + agg.tot.cacheWrite;
+      const toolTotal = agg.toolTotal || 0;
+      fs.mkdirSync(DATA_DIR, { recursive: true });
+      fs.writeFileSync(sumFile, JSON.stringify({
+        ts: Date.now(),
+        cacheHit: cacheDen ? Math.round((agg.tot.cacheRead / cacheDen) * 100) : null,
+        topSession: agg.sessions[0] && agg.tot.weighted ? Math.round((agg.sessions[0].weighted / agg.tot.weighted) * 100) : null,
+        topSessionId: agg.sessions[0] ? agg.sessions[0].id.slice(-6) : null,
+        topTool: agg.tools[0] && toolTotal ? Math.round((agg.tools[0].count / toolTotal) * 100) : null,
+        topToolName: agg.tools[0] ? agg.tools[0].name : null,
+        weighted5h: agg.tot.weighted,
+      }));
+    }
+  } catch { /* 요약 실패는 표시줄 동작에 영향을 주지 않습니다 */ }
+
   const parts = [];
   if (five !== null) parts.push(`5h ${Math.round(five)}%`);
   if (seven !== null) parts.push(`7d ${Math.round(seven)}%`);

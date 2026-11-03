@@ -3,7 +3,11 @@ export type Usage = {
   fiveHour: number | null
   sevenDay: number | null
   updatedAt: number | null
-  ctx: number | null
+  cacheHit: number | null
+  topSession: number | null
+  topSessionId: string | null
+  topTool: number | null
+  topToolName: string | null
 }
 
 declare module 'claude-code' {
