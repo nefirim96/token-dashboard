@@ -69,8 +69,8 @@ export const register: Register = on => {
   // 응답이 끝날 때마다 기록 파일을 다시 읽습니다.
   on('turn.complete', async ($, e, next) => {
     // update의 함수는 값을 바로 돌려줘야 합니다. Promise를 넘기면 NaN이 됩니다.
-    const next = await loadSnapshot($)
-    await update($, usage, () => next)
+    const snap = await loadSnapshot($)
+    await update($, usage, () => snap)
     return next(e)
   })
 
