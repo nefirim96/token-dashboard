@@ -124,11 +124,8 @@ export const register: Register = on => {
 }
 
 async function drawPane($: any, Box: any, Text: any) {
-    let u = await read($, usage)
-    if (!u) {
-      u = await loadUsage($)
-      await update($, usage, () => u)
-    }
+    // 그리기 중에는 상태를 쓸 수 없으므로, 저장된 값이 없으면 파일에서 읽기만 합니다.
+    const u: Usage = (await read($, usage)) ?? (await loadUsage($))
 
     const rows: Array<{ name: string; value: number | null; note?: string }> = [
       { name: '5시간 한도', value: u.fiveHour },
