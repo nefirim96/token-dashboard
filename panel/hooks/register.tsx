@@ -6,7 +6,7 @@ import type { Usage } from '../types'
 const PANE = 'token-dashboard'
 // 값이 바뀌면 shape 태그를 올려서 이전 버전이 저장한 값을 거절하게 합니다.
 const usage = atom({ plugin: 'token-dashboard-panel', key: 'usage' } as const, null as Usage | null, {
-  shape: 'usage-1',
+  shape: 'usage-2',
 })
 
 const EMPTY: Usage = { fiveHour: null, sevenDay: null, updatedAt: null, ctx: null }
@@ -68,7 +68,9 @@ export const register: Register = on => {
 
   // 응답이 끝날 때마다 기록 파일을 다시 읽습니다.
   on('turn.complete', async ($, e, next) => {
-    await update($, usage, () => loadSnapshot($))
+    // update의 함수는 값을 바로 돌려줘야 합니다. Promise를 넘기면 NaN이 됩니다.
+    const next = await loadSnapshot($)
+    await update($, usage, () => next)
     return next(e)
   })
 
