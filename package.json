@@ -1,0 +1,12 @@
+{
+  "name": "token-dashboard",
+  "version": "0.1.0",
+  "description": "Porsche-911-style cluster for Claude Code token usage (original design, no external dependencies)",
+  "bin": { "token-dashboard": "gauge.mjs" },
+  "main": "gauge.mjs",
+  "type": "module",
+  "engines": { "node": ">=18" },
+  "files": ["gauge.mjs", "README.md", "LICENSE"],
+  "keywords": ["claude-code", "token", "usage", "dashboard", "statusline"],
+  "license": "MIT"
+}
