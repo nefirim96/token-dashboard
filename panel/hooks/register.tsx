@@ -23,7 +23,12 @@ const EMPTY: Usage = {
 // token-dashboard 상태 표시줄 스크립트가 남긴 두 파일을 읽습니다.
 // snapshots.jsonl: 공식 한도 %, summary.json: 캐시·세션·도구 비중 (10분마다 갱신)
 async function loadUsage($: any): Promise<Usage> {
-  const home = (await $.env.get('HOME')) || (await $.env.get('USERPROFILE')) || ''
+  let home = ''
+  try {
+    home = (await $.env.get('HOME')) || (await $.env.get('USERPROFILE')) || ''
+  } catch {
+    return EMPTY
+  }
   if (!home) return EMPTY
   const base = `${home}/.claude/token-dashboard`
   const out: Usage = { ...EMPTY }
@@ -105,6 +110,20 @@ export const register: Register = on => {
 
   on('ui.render', { component: 'Pane', requestId: PANE }, async ($, e) => {
     const { Box, Text } = $.ui.resolve(e)
+    try {
+      return await drawPane($, Box, Text)
+    } catch (err) {
+      return (
+        <Box flexDirection="column">
+          <Text>계기판을 그리지 못했습니다.</Text>
+          <Text dimColor>{String((err as Error)?.message ?? err)}</Text>
+        </Box>
+      )
+    }
+  })
+}
+
+async function drawPane($: any, Box: any, Text: any) {
     let u = await read($, usage)
     if (!u) {
       u = await loadUsage($)
@@ -137,5 +156,4 @@ export const register: Register = on => {
         </Text>
       </Box>
     )
-  })
 }
