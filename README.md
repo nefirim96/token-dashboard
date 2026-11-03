@@ -30,6 +30,18 @@ node "D:\클로드 개발\token-dashboard\gauge.mjs" --hours 720
 
 Claude Code 세션 안에서는 입력창에 `!`를 붙여 실행할 수 있습니다. 예: `! node /경로/gauge.mjs`
 
+## Claude Code에 맡기기
+
+Claude Code를 쓰고 있다면, 아래 문장을 그대로 붙여넣으면 설치를 맡길 수 있습니다.
+
+```
+https://github.com/nefirim96/token-dashboard 의 README를 읽고 token-dashboard를 설치해 줘.
+설치 명령은 "npx github:nefirim96/token-dashboard install" 이야.
+설치 후 ~/.claude/settings.json의 statusLine이 들어갔는지 확인하고, "--html" 계기판을 열어 줘.
+```
+
+설치 명령은 설정 파일을 고치므로, Claude Code가 실행 허락을 물으면 허용해 주세요.
+
 ## 빠른 설치 (권장)
 
 Node.js 18 이상이 있으면 아래 명령 한 줄로 설치할 수 있습니다. `settings.json`은 자동으로 고치고, 고치기 전에 백업을 만듭니다.
