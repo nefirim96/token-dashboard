@@ -30,6 +30,20 @@ node "D:\클로드 개발\token-dashboard\gauge.mjs" --hours 720
 
 Claude Code 세션 안에서는 입력창에 `!`를 붙여 실행할 수 있습니다. 예: `! node /경로/gauge.mjs`
 
+## 빠른 설치 (권장)
+
+Node.js 18 이상이 있으면 아래 명령 한 줄로 설치할 수 있습니다. `settings.json`은 자동으로 고치고, 고치기 전에 백업을 만듭니다.
+
+```bash
+npx github:nefirim96/token-dashboard install
+```
+
+- 설치 후 Claude Code를 완전히 껐다가 다시 열고, 메시지를 한 번 보내세요. 하단에 `5h xx% · 7d xx%`가 보이면 연결된 것입니다. (Pro/Max 구독자 전용)
+- 계기판 보기: `npx github:nefirim96/token-dashboard --html`
+- 되돌리기: `npx github:nefirim96/token-dashboard uninstall`
+
+아래의 수동 설정은 자동 설치가 안 될 때 쓰세요.
+
 ## 한도 % 연결 (Pro/Max 구독자)
 
 Claude Code는 상태 표시줄 스크립트에 5시간·7일 한도 사용률을 넘겨 줍니다. `~/.claude/settings.json`에 아래를 넣으세요. 기존 `statusLine` 설정이 있으면 백업 후 바꾸세요.

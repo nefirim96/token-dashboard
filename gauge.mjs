@@ -12,6 +12,7 @@ import fs from 'node:fs';
 import path from 'node:path';
 import os from 'node:os';
 import { execFile } from 'node:child_process';
+import { fileURLToPath } from 'node:url';
 
 const CONFIG_DIR = process.env.CLAUDE_CONFIG_DIR || path.join(os.homedir(), '.claude');
 const PROJECTS_DIR = path.join(CONFIG_DIR, 'projects');
@@ -341,8 +342,86 @@ function openFile(file) {
   execFile(bin, args, () => { /* 열기 실패는 무시: 경로만 안내 */ });
 }
 
+// ---------- 설치 / 제거 (settings.json 자동 설정) ----------
+// 공백이 없는 경로에 스크립트를 복사하고, settings.json의 statusLine을 그 경로로 맞춥니다.
+// 기존 settings.json은 백업한 뒤에만 고칩니다.
+function settingsPath() {
+  return path.join(CONFIG_DIR, 'settings.json');
+}
+
+function readSettings() {
+  const file = settingsPath();
+  if (!fs.existsSync(file)) return {};
+  const text = fs.readFileSync(file, 'utf8');
+  if (!text.trim()) return {};
+  return JSON.parse(text); // 잘못된 JSON이면 여기서 예외 → 파일을 건드리지 않음
+}
+
+function writeSettings(obj) {
+  const file = settingsPath();
+  fs.mkdirSync(path.dirname(file), { recursive: true });
+  if (fs.existsSync(file)) {
+    const stamp = new Date().toISOString().replace(/[:.]/g, '-');
+    fs.copyFileSync(file, `${file}.bak-${stamp}`);
+  }
+  fs.writeFileSync(file, JSON.stringify(obj, null, 2) + '\n');
+}
+
+function install() {
+  let settings;
+  try {
+    settings = readSettings();
+  } catch (e) {
+    console.error(`settings.json을 읽을 수 없습니다 (JSON 형식 오류): ${settingsPath()}`);
+    console.error('파일을 고친 뒤 다시 실행하세요. 아무것도 바꾸지 않았습니다.');
+    process.exit(1);
+  }
+
+  fs.mkdirSync(DATA_DIR, { recursive: true });
+  const target = path.join(DATA_DIR, 'gauge.mjs');
+  fs.copyFileSync(fileURLToPath(import.meta.url), target);
+  const posixTarget = target.split(path.sep).join('/');
+  if (/\s/.test(posixTarget)) {
+    console.warn(`경고: 설치 경로에 공백이 있습니다 (${posixTarget}). 상태 표시줄이 실행되지 않을 수 있습니다.`);
+  }
+
+  const command = `node ${posixTarget} statusline`;
+  const before = settings.statusLine ? JSON.stringify(settings.statusLine) : null;
+  settings.statusLine = { type: 'command', command };
+  writeSettings(settings);
+
+  console.log('설치 완료.');
+  console.log(`  스크립트: ${target}`);
+  console.log(`  설정 파일: ${settingsPath()}`);
+  if (before) console.log(`  기존 statusLine은 백업 파일에 남아 있습니다: ${before}`);
+  console.log('다음 단계: Claude Code를 완전히 껐다가 다시 열고, 메시지를 한 번 보내 보세요.');
+  console.log('하단에 "5h xx% · 7d xx%"가 보이면 연결된 것입니다. (Pro/Max 구독자 전용)');
+}
+
+function uninstall() {
+  let settings;
+  try {
+    settings = readSettings();
+  } catch {
+    console.error('settings.json을 읽을 수 없습니다. 아무것도 바꾸지 않았습니다.');
+    process.exit(1);
+  }
+  const cur = settings.statusLine?.command || '';
+  if (!cur.includes('token-dashboard') && !cur.includes('gauge.mjs')) {
+    console.log('token-dashboard의 statusLine이 없습니다. 아무것도 바꾸지 않았습니다.');
+    return;
+  }
+  delete settings.statusLine;
+  writeSettings(settings);
+  console.log('statusLine을 제거했습니다. 백업 파일은 그대로 남아 있습니다.');
+}
+
 // ---------- 진입점 ----------
-if (cmd === 'statusline') {
+if (cmd === 'install') {
+  install();
+} else if (cmd === 'uninstall') {
+  uninstall();
+} else if (cmd === 'statusline') {
   await statusline();
 } else {
   const sinceMs = Date.now() - hours * 3600e3;
