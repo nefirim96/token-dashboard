@@ -8,6 +8,9 @@ export type Usage = {
   topSessionId: string | null
   topTool: number | null
   topToolName: string | null
+  topSessions: { id: string; project: string; weighted: number; requests: number }[]
+  topTools: { name: string; pct: number | null }[]
+  gaugePath: string | null
 }
 
 declare module 'claude-code' {

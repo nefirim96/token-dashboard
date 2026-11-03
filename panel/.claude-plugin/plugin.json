@@ -1,8 +1,10 @@
 {
   "name": "token-dashboard-panel",
-  "version": "0.1.2",
+  "version": "0.1.3",
   "description": "Porsche-911-style usage cluster in a pane beside the chat (reads token-dashboard snapshots)",
-  "author": { "name": "nefirim96" },
+  "author": {
+    "name": "nefirim96"
+  },
   "license": "MIT",
   "types": "./types/index.d.ts"
 }

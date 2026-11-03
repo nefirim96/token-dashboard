@@ -70,7 +70,7 @@ async function statusline() {
   try {
     const sumFile = path.join(DATA_DIR, 'summary.json');
     const old = fs.existsSync(sumFile) ? JSON.parse(fs.readFileSync(sumFile, 'utf8')) : null;
-    if (!old || Date.now() - old.ts > 10 * 60e3) {
+    if (!old || !old.topSessions || Date.now() - old.ts > 10 * 60e3) {
       const agg = aggregate(Date.now() - 5 * 3600e3);
       const cacheDen = agg.tot.cacheRead + agg.tot.input + agg.tot.cacheWrite;
       const toolTotal = agg.toolTotal || 0;
@@ -83,6 +83,17 @@ async function statusline() {
         topTool: agg.tools[0] && toolTotal ? Math.round((agg.tools[0].count / toolTotal) * 100) : null,
         topToolName: agg.tools[0] ? agg.tools[0].name : null,
         weighted5h: agg.tot.weighted,
+        // 패널의 요약용 상위 3개 목록
+        topSessions: agg.sessions.slice(0, 3).map(x => ({
+          id: x.id.slice(-6),
+          project: path.basename(x.cwd || '') || '-',
+          weighted: x.weighted,
+          requests: x.requests,
+        })),
+        topTools: agg.tools.slice(0, 3).map(x => ({
+          name: x.name,
+          pct: toolTotal ? Math.round((x.count / toolTotal) * 100) : null,
+        })),
       }));
     }
   } catch { /* 요약 실패는 표시줄 동작에 영향을 주지 않습니다 */ }

@@ -6,7 +6,7 @@ import type { Usage } from '../types'
 const PANE = 'token-dashboard'
 // 값의 모양이 바뀌면 shape 태그를 올려서 이전 버전이 저장한 값을 거절하게 합니다.
 const usage = atom({ plugin: 'token-dashboard-panel', key: 'usage' } as const, null as Usage | null, {
-  shape: 'usage-3',
+  shape: 'usage-4',
 })
 
 const EMPTY: Usage = {
@@ -18,6 +18,9 @@ const EMPTY: Usage = {
   topSessionId: null,
   topTool: null,
   topToolName: null,
+  topSessions: [],
+  topTools: [],
+  gaugePath: null,
 }
 
 // token-dashboard 상태 표시줄 스크립트가 남긴 두 파일을 읽습니다.
@@ -56,9 +59,13 @@ async function loadUsage($: any): Promise<Usage> {
     out.topSessionId = s.topSessionId ?? null
     out.topTool = s.topTool ?? null
     out.topToolName = s.topToolName ?? null
+    out.topSessions = Array.isArray(s.topSessions) ? s.topSessions : []
+    out.topTools = Array.isArray(s.topTools) ? s.topTools : []
   } catch {
     // 요약이 아직 없으면 세 항목은 비워 둡니다
   }
+
+  out.gaugePath = `${base}/gauge.mjs`
 
   return out
 }
@@ -146,6 +153,29 @@ async function drawPane($: any, Box: any, Text: any) {
             <Text>{bar(row.value)}</Text>
           </Box>
         ))}
+        {u.topSessions.length > 0 && (
+          <Box flexDirection="column">
+            <Text bold>많이 쓴 세션</Text>
+            {u.topSessions.map(x => (
+              <Text key={x.id}>
+                {`…${x.id}  ${x.project}  ${x.requests}응답`}
+              </Text>
+            ))}
+          </Box>
+        )}
+        {u.topTools.length > 0 && (
+          <Box flexDirection="column">
+            <Text bold>자주 쓴 도구</Text>
+            {u.topTools.map(x => (
+              <Text key={x.name}>
+                {`${x.name}  ${x.pct === null ? '--' : x.pct + '%'}`}
+              </Text>
+            ))}
+          </Box>
+        )}
+        {u.gaugePath && (
+          <Text dimColor>{`상세 페이지: node "${u.gaugePath}" --html`}</Text>
+        )}
         <Text dimColor>
           {u.updatedAt === null
             ? '상태 표시줄 설치 후 응답을 한 번 받으면 값이 나옵니다.'
