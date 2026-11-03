@@ -1,0 +1,11 @@
+{
+  "name": "token-dashboard",
+  "owner": { "name": "nefirim96" },
+  "plugins": [
+    {
+      "name": "token-dashboard-panel",
+      "source": "./panel",
+      "description": "Porsche-911-style usage cluster in a pane beside the chat"
+    }
+  ]
+}

@@ -30,6 +30,18 @@ node "D:\클로드 개발\token-dashboard\gauge.mjs" --hours 720
 
 Claude Code 세션 안에서는 입력창에 `!`를 붙여 실행할 수 있습니다. 예: `! node /경로/gauge.mjs`
 
+## 채팅 옆 패널 (선택)
+
+상태 표시줄 대신 Claude Code 채팅 옆 패널에 계기판을 띄울 수 있습니다. `panel/` 폴더에 있는 플러그인입니다.
+
+Claude Code에서 아래를 입력하세요.
+
+```
+/plugin install token-dashboard-panel --marketplace nefirim96/token-dashboard
+```
+
+설치 후 `/token-gauge` 명령으로 패널을 엽니다. 값은 상태 표시줄 설치(위의 install 명령)로 기록된 파일을 읽으므로, 패널을 쓰려면 상태 표시줄도 먼저 연결해 주세요. Pro/Max 구독자만 한도 %가 나옵니다.
+
 ## Claude Code에 맡기기
 
 Claude Code를 쓰고 있다면, 아래 문장을 그대로 붙여넣으면 설치를 맡길 수 있습니다.
