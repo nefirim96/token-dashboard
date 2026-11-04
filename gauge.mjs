@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-// token-dashboard: 포르쉐 911 스타일 계기판 (오리지널 디자인)
+// token-dashboard: 계기판 스타일 사용량 표시 (오리지널 디자인)
 // 외부 패키지 없음. 로컬 기록만 읽고, 어디로도 전송하지 않습니다.
 //
 //   node gauge.mjs              터미널 계기판

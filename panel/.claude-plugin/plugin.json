@@ -1,7 +1,7 @@
 {
   "name": "token-dashboard-panel",
-  "version": "0.1.3",
-  "description": "Porsche-911-style usage cluster in a pane beside the chat (reads token-dashboard snapshots)",
+  "version": "0.1.4",
+  "description": "Gauge-style usage cluster in a pane beside the chat (reads token-dashboard snapshots)",
   "author": {
     "name": "nefirim96"
   },

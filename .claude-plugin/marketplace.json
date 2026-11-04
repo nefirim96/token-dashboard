@@ -5,7 +5,7 @@
     {
       "name": "token-dashboard-panel",
       "source": "./panel",
-      "description": "Porsche-911-style usage cluster in a pane beside the chat"
+      "description": "Usage gauge in a pane beside the chat"
     }
   ]
 }
